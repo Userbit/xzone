@@ -1,18 +1,18 @@
 
 const rootdir = 'xzone'
 
-function getDebug(module) {
-    return require('debug')(getNamespace(module, rootdir))
+function getDebug(externalModule) {
+    return require('debug')(getNamespace(externalModule, rootdir))
 } 
 
-function getNamespace(module, rootdir) {
-    const filename = module.filename
+function getNamespace(externalModule, rootdir) {
+    const filename = externalModule.filename
     const namespace = filename.slice(filename.indexOf(rootdir))
     return namespace + ':'
 }
 
-function sleep(module) {
-    let debug = getDebug(module)
+function sleep(externalModule) {
+    let debug = getDebug(externalModule)
     return (delayInSec) => {
         const child_process = require("child_process");
         debug && debug(`Sleep on ${delayInSec} sec...`)
@@ -21,10 +21,15 @@ function sleep(module) {
 }
 
 
-module.exports = (module) => {
+module.exports = (externalModule) => {
+    if (!(externalModule instanceof module.constructor)) {
+        const errMsg = "require('path/to/util')(module) should be passed Module object of caller"
+        throw Error(errMsg)
+    }
+
     return {
-        debug: getDebug(module),
-        sleep: sleep(module),
+        debug: getDebug(externalModule),
+        sleep: sleep(externalModule),
         getNamespace,
     }
 }

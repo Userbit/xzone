@@ -9,6 +9,15 @@ describe('testing util.js', () => {
         expect(util).toBeTruthy()
     })
 
+    test('require("path/to/util")(module) should throw error without Module object', () => {
+       expect(() => require('../src/util')()).toThrow()
+       expect(() => require('../src/util')({})).toThrow()
+    })
+
+    test('require("path/to/util")(module) should not throw error whith Module object', () => {
+       expect(() => require('../src/util')(module)).not.toThrow()
+    })
+
     test('util object should contain necessarily some keys', () => {
         expect(util).toContainAllKeys(
             [
