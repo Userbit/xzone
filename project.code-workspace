@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"jest.showCoverageOnLoad": true,
+		"jest.pathToJest": "npm run testsilent --"
+	}
+}
