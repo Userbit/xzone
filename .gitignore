@@ -1,0 +1,9 @@
+
+# ignore /coverage/ directory for testing framework
+/coverage
+
+# ignore node_modules/ in anywhere
+node_modules/
+
+# ignore old/*.json 
+/old/*.json
