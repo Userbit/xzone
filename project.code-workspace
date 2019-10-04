@@ -6,6 +6,8 @@
 	],
 	"settings": {
 		"jest.showCoverageOnLoad": true,
-		"jest.pathToJest": "npm run testsilent --"
+		"jest.autoEnable": true,
+		"jest.runAllTestsFirst": false,
+		"jest.pathToConfig": "./jest.vscode.config.json",
 	}
 }

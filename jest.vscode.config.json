@@ -1,0 +1,11 @@
+{
+    "verbose": false,
+    "collectCoverage": true,
+    "preset": "@shelf/jest-mongodb",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
+    "reporters": [
+      ["jest-simple-dot-reporter", {"color": true}]
+    ]
+}

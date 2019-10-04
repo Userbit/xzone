@@ -4,15 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --reporters=jest-simple-dot-reporter",
     "cover": "jest --coverage",
-    "testsilent": "jest --reporters=jest-silent-reporter",
-    "testdots": "jest --reporters=jest-simple-dot-reporter",
+    "coverVerbose": "jest --coverage --verbose",
+    "testSilent": "JEST_SILENT_REPORTER_DOTS=true jest --reporters=jest-silent-reporter",
+    "testDots": "jest --reporters=jest-simple-dot-reporter",
+    "testDotsCover": "jest --coverage --reporters=jest-simple-dot-reporter",
+    "testVSCode": "jest --config='./jest.vscode.config.json'",
     "start": "./index.js"
   },
   "jest": {
-    "verbose": true,
-    "collectCoverage": true,
+    "verbose": false,
+    "collectCoverage": false,
     "preset": "@shelf/jest-mongodb",
     "setupFilesAfterEnv": [
       "./jest.setup.js"
