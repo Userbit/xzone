@@ -40,6 +40,6 @@
     "jest-chain": "^1.1.2",
     "jest-extended": "^0.11.2",
     "jest-silent-reporter": "^0.1.2",
-    "jest-simple-dot-reporter": "^1.0.3"
+    "jest-simple-dot-reporter": "git+https://github.com/Userbit/jest-simple-dot-reporter.git"
   }
 }
