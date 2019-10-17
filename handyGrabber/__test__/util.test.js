@@ -18,7 +18,7 @@ describe('testing util.js', () => {
        expect(() => require('../src/util')(module)).not.toThrow()
     })
 
-    test('util object should contain necessarily some keys', () => {
+    xtest('util object should contain necessarily some keys', () => {
         expect(util).toContainAllKeys(
             [
                 'getNamespace',
@@ -45,5 +45,13 @@ describe('testing util.js', () => {
         util.sleep(0.1)
         expect(child_process.execSync).toBeCalledWith('sleep 0.1')
 
+    })
+
+    test('util.getObjectForKeys() should run correctly', () => {
+        const keys = ['a', 'k', 'z']
+        const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 }
+        const expected = { a: 1, k: 3, z: 5 }
+        expect(util.getObjectForKeys(keys, fromObject))
+            .toStrictEqual(expected)
     })
 })

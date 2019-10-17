@@ -20,6 +20,13 @@ function sleep(externalModule) {
     }
 }
 
+function getObjectForKeys(keys, fromObject) {
+    return keys.reduce((obj, key) => {
+        obj[key] = fromObject[key]
+        return obj
+    }, {})
+}
+
 
 module.exports = (externalModule) => {
     if (!(externalModule instanceof module.constructor)) {
@@ -31,5 +38,6 @@ module.exports = (externalModule) => {
         debug: getDebug(externalModule),
         sleep: sleep(externalModule),
         getNamespace,
+        getObjectForKeys,
     }
 }
