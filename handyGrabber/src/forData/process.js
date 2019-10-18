@@ -1,4 +1,4 @@
-const { debug, sleep, getObjectForKeys } = require('../util')(module)
+const { debug, sleep, ...util } = require('../util')(module)
 const dbModel = require('./dbModel')
 
 module.exports = {
@@ -18,24 +18,9 @@ module.exports = {
         debug('Running...')
 
         // Get cleaned state from cli.argv out of specified keys for the sake of clarity
-        let state = getObjectForKeys(['stage', 'entity', 'log'], cli.argv)
-        const runStage = 'runStage:' + state.stage
+        let state = util.getObjectForKeys(['stage', 'entity', 'log'], cli.argv)
 
-        switch(state.entity) {
-            case 'movie':
-                await this[runStage](state)
-                break
-
-            case 'torrent':
-                state = { ...state, deleted: true }
-                await this[runStage](state)
-
-                state = { ...state, deleted: false }
-                await this[runStage](state)
-
-                break
-        }
-
+        await this['runEntity:' + state.entity](state)
         await this.end()
     },
 
@@ -43,6 +28,27 @@ module.exports = {
         debug('Ending...')
         await this.db.close()
     },
+
+    'runEntity:movie': async function(state) {
+        debug('runEntity:movie(%o)...', state)
+        await this.runStage(state)
+    }, 
+
+    'runEntity:torrent': async function(state) {
+        debug('runEntity:torrent(%o)...', state)
+
+        state = { ...state, deleted: true }
+        await this.runStage(state)
+
+        state = { ...state, deleted: false }
+        await this.runStage(state)
+    }, 
+
+    async runStage(state) {
+        debug('runStage(%o)...', state)
+
+        await this['runStage:' + state.stage](state)
+    }, 
 
     'runStage:first': async function(state) {
         debug('runStage:first(%o)...', state)
