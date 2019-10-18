@@ -1,5 +1,7 @@
 const { debug, sleep, ...util } = require('../util')(module)
 const dbModel = require('./dbModel')
+const log = require('./log')
+const req = require('./request')
 
 module.exports = {
 
@@ -47,8 +49,16 @@ module.exports = {
     async runStage(state) {
         debug('runStage(%o)...', state)
 
+        await this.initSubModules(state)
         await this['runStage:' + state.stage](state)
     }, 
+
+    async initSubModules(state) {
+        debug('initSubModules(%o)...', state)
+
+        log.init(state)
+        req.init(state)
+    },
 
     'runStage:first': async function(state) {
         debug('runStage:first(%o)...', state)

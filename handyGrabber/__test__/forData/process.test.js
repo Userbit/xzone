@@ -1,5 +1,7 @@
 
 const proc = require('../../src/forData/process')
+const log = require('../../src/forData/log')
+const req = require('../../src/forData/request')
 const dbModelPath = '../../src/forData/dbModel';
 const dbModel = require(dbModelPath)
 
@@ -87,20 +89,40 @@ describe('testing forData/process.js', () => {
         jest.restoreAllMocks()
     })
 
-    test('runStage() should call runStage:first|upsert|check method ', async () => {
+    test('runStage() should call initSubModules(), runStage:first|upsert|check() methods', async () => {
         for (let stage of stages) {
             const runStage_stage = 'runStage:' + stage
             const state = { stage, entity: 'some entity', log: 1 }
             jest.spyOn(proc, runStage_stage).mockResolvedValue({})
+            jest.spyOn(proc, 'initSubModules').mockResolvedValue({})
 
             await proc.runStage(state)
 
             expect(proc[runStage_stage])
                 .toBeCalledTimes(1)
                 .toBeCalledWith(state)
+            expect(proc.initSubModules)
+                .toBeCalledTimes(1)
+                .toBeCalledWith(state)
 
             jest.restoreAllMocks()
         }
+    })
+
+    test('initSubModules() should call log.init(), req.init() methods', async () => {
+        const state = { stage: 'some stage', entity: 'some entity', log: 1, deleted: true }
+        jest.spyOn(req, 'init').mockResolvedValue({})
+        jest.spyOn(log, 'init').mockResolvedValue({})
+
+        await proc.initSubModules(state)
+
+        expect(log.init)
+            .toBeCalledTimes(1)
+            .toBeCalledWith(state)
+        expect(req.init)
+            .toBeCalledTimes(1)
+            .toBeCalledWith(state)
+        
     })
 
 })

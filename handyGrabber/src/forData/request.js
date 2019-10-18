@@ -17,3 +17,9 @@ const defaultOptions = {
 };
 
 const baseRequest = request.defaults(defaultOptions)
+
+module.exports = {
+    init(state) {
+
+    },
+}
