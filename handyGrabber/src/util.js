@@ -22,7 +22,8 @@ function sleep(externalModule) {
 
 function getObjectForKeys(keys, fromObject) {
     return keys.reduce((obj, key) => {
-        obj[key] = fromObject[key]
+        if (fromObject[key])
+            obj[key] = fromObject[key]
         return obj
     }, {})
 }

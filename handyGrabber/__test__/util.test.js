@@ -47,8 +47,16 @@ describe('testing util.js', () => {
 
     })
 
-    test('util.getObjectForKeys() should run correctly', () => {
+    test('util.getObjectForKeys() should run correctly for existing keys', () => {
         const keys = ['a', 'k', 'z']
+        const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 }
+        const expected = { a: 1, k: 3, z: 5 }
+        expect(util.getObjectForKeys(keys, fromObject))
+            .toStrictEqual(expected)
+    })
+
+    test('util.getObjectForKeys() should run correctly for not existing keys', () => {
+        const keys = ['a', 'AA', 'k', 'z', 'BB']
         const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 }
         const expected = { a: 1, k: 3, z: 5 }
         expect(util.getObjectForKeys(keys, fromObject))
