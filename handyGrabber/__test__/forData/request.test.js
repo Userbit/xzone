@@ -18,20 +18,27 @@ describe('testing forData/request.js', () => {
             const getOptsFor = 'getOptsFor:' + entity
             const mockObj = { mockProp: 'mockVal' }
             const state = { entity, stage: 'some stage', log: 1, deleted: true }
-            jest.spyOn(request, 'defaults').mockReturnValueOnce(mockObj)
-            jest.spyOn(req, getOptsFor).mockImplementationOnce(() => {})
+            jest.spyOn(request, 'defaults')
+                .mockReturnValueOnce(request)
+                .mockReturnValueOnce(request)
+                .mockReturnValueOnce(mockObj)
+            jest.spyOn(req, getOptsFor).mockReturnValueOnce(mockObj)
 
             req.init(state)
 
-            expect(request.defaults).toBeCalledWith(expect.toContainAllKeys([
-                'baseUrl',
-                'json',
-                'method',
-                'headers',
-                'gzip',
-                'uri',
-                'qs',
-            ]))
+            expect(request.defaults)
+                .nthCalledWith(1, expect.toContainAllKeys([
+                    'baseUrl',
+                    'json',
+                    'method',
+                    'headers',
+                    'gzip',
+                ]))
+                .nthCalledWith(2, expect.toContainAllKeys([
+                    'uri',
+                    'qs',
+                ]))
+                .nthCalledWith(3, mockObj)
             expect(req[getOptsFor]).toBeCalledWith(state)
             expect(req.baseRequest).toStrictEqual(mockObj)
 
@@ -56,7 +63,12 @@ describe('testing forData/request.js', () => {
     test('getOptsFor:torrent() should call baseRequest.defaults(opts) correctly', async () => {
         for(const deleted of [true, false]) {
             const state = { entity: 'torrent', deleted, stage: 'some stage', log: 1 }
-            const expectedOpts = { uri: '/torrent/select/', qs: { fq: 'deleted:' + deleted } }
+            const expectedOpts = {
+                uri: '/torrent/select/',
+                qs: { 
+                    fq: 'deleted:' + deleted
+                }
+            }
             
             expect(req["getOptsFor:torrent"](state)).toStrictEqual(expectedOpts)
         }

@@ -39,11 +39,10 @@ module.exports = {
 
     init(state) {
         const entityOptions = this['getOptsFor:' + state.entity](state)
-        this.baseRequest = request.defaults({ 
-            ...defaultOptions, 
-            ...queryOptions,
-            ...entityOptions,
-        })
+        this.baseRequest = request
+            .defaults(defaultOptions)
+            .defaults(queryOptions)
+            .defaults(entityOptions)
     },
 
     'getOptsFor:movie': function(state) {
