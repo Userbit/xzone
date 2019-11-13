@@ -1,7 +1,7 @@
-const childProcess = require('child_process');
-const debugModule = require('debug');
+const childProcess = require("child_process");
+const debugModule = require("debug");
 
-const rootdir = 'xzone';
+const rootdir = "xzone";
 
 function getNamespace(externalModule, rootDir) {
   const { filename } = externalModule;
@@ -32,7 +32,6 @@ function getObjectForKeys(keys, fromObject) {
     return obj;
   }, {});
 }
-
 
 module.exports = (externalModule) => {
   if (!(externalModule instanceof module.constructor)) {
