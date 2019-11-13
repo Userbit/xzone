@@ -1,8 +1,8 @@
-const { MongoClient } = require('mongodb');
-const { debug } = require('./util')(module);
+const { MongoClient } = require("mongodb");
+const { debug } = require("./util")(module);
 
 exports.DbConn = class {
-  constructor(url = 'mongodb://localhost:27017', dbName = 'handyData') {
+  constructor(url = "mongodb://localhost:27017", dbName = "handyData") {
     this.url = `${url}/${dbName}`;
     this.client = new MongoClient(this.url, { useNewUrlParser: true });
   }
@@ -12,7 +12,7 @@ exports.DbConn = class {
 
     try {
       await this.client.connect();
-      debug('Connected successfully to MongoDb:', this.url);
+      debug("Connected successfully to MongoDb:", this.url);
       this.db = this.client.db();
       return this.db;
     } catch (e) {
@@ -24,7 +24,7 @@ exports.DbConn = class {
   async close() {
     try {
       await this.client.close();
-      debug('Connection to MongoDb was closed.');
+      debug("Connection to MongoDb was closed.");
     } catch (e) {
       e.message = `Error occurred when closing connection: ${e.message}`;
       throw e;
