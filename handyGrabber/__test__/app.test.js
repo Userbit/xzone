@@ -1,50 +1,35 @@
+const cli = require("../src/cli");
+const app = require("../src/app");
 
-jest.mock('../src/cli', () => {
-    return {
-        argv: {
-            help: jest.fn(() => {})
-        }
-    }
-})
+const processData = require("../src/forData/process");
+const processImg = require("../src/forImg/process");
 
-const cli = require('../src/cli')
-const app = require('../src/app')
+describe("testing app.js", () => {
+  it("app.js should be imported", () => {
+    expect(app).toBeObject();
+  });
 
-const forDataModule = '../src/forData/process'
-const forImgModule = '../src/forImg/process'
+  it(`app.start() should call processData.init(cli) if isData() is true`, async () => {
+    jest.spyOn(cli, "isData").mockImplementation(() => true);
+    jest.spyOn(processData, "init").mockImplementation(() => 42);
+    cli.argv = { _: ["data"] };
 
-describe('testing app.js', () => {
-    test('app.js should be imported', () => {
-        expect(app).toBeObject()
-    })
+    await app.start(cli);
 
-    test(`start() should require "${forDataModule}"`, async () => {
-        cli.isData = jest.fn(() => true)
-        cli.argv = { _: ['data'] }
-        jest.mock(forDataModule, () => {
-            return {
-                init: jest.fn().mockResolvedValue(42)
-            }
-        })
-        const process = require(forDataModule) 
+    expect(processData.init).toHaveBeenCalledWith(cli);
+    expect(cli.isData).toHaveBeenCalledWith("data");
+  });
 
-        expect(app.start(cli)).resolves.toBe(42)
-        expect(cli.isData).toBeCalledWith('data')
-    })
+  it(`app.start() should call processImg.init(cli) if isImg() is true`, async () => {
+    jest.spyOn(cli, "isData").mockImplementation(() => false);
+    jest.spyOn(cli, "isImg").mockImplementation(() => true);
+    jest.spyOn(processImg, "init").mockImplementation(() => 42);
+    cli.argv = { _: ["img"] };
 
-    test(`start() should require "${forImgModule}"`, () => {
-        cli.isData = jest.fn(() => false)
-        cli.isImg = jest.fn(() => true)
-        cli.argv = { _: ['img'] }
-        jest.mock(forImgModule, () => {
-            return {
-                init: jest.fn().mockResolvedValue(42)
-            }
-        })
-        const process = require(forImgModule)
+    await app.start(cli);
 
-        expect(app.start(cli)).resolves.toBe(42)
-        expect(cli.isData).toBeCalledWith('img')
-        expect(cli.isImg).toBeCalledWith('img')
-    })
-})
+    expect(cli.isData).toHaveBeenCalledWith("img");
+    expect(cli.isImg).toHaveBeenCalledWith("img");
+    expect(processImg.init).toHaveBeenCalledWith(cli);
+  });
+});

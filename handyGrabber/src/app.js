@@ -1,4 +1,6 @@
 const cli = require("./cli");
+const processData = require("./forData/process");
+const processImg = require("./forImg/process");
 
 const initCli = () => {
   cli.argv = cli.argv
@@ -9,18 +11,15 @@ const initCli = () => {
   return cli;
 };
 
-// eslint-disable-next-line consistent-return
 const start = async (initedCli) => {
   if (initedCli.isData(initedCli.argv._[0])) {
     // Start processing of data
-    // eslint-disable-next-line global-require
-    return require("./forData/process").init(initedCli);
+    await processData.init(initedCli);
   }
 
   if (initedCli.isImg(initedCli.argv._[0])) {
     // Start processing of images
-    // eslint-disable-next-line global-require
-    return require("./forImg/process").init(initedCli);
+    await processImg.init(initedCli);
   }
 };
 
@@ -30,5 +29,7 @@ module.exports = {
 };
 
 if (!module.parent) {
-  start(initCli());
+  // Only run in real CLI invoking, not in tests.
+  const initedCli = initCli();
+  start(initedCli);
 }
