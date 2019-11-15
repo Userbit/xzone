@@ -35,7 +35,8 @@ function getObjectForKeys(keys, fromObject) {
 
 module.exports = (externalModule) => {
   if (!(externalModule instanceof module.constructor)) {
-    const errMsg = "require('path/to/util')(module) should be passed Module object of caller";
+    const errMsg =
+      "require('path/to/util')(module) should be passed Module object of caller";
     throw Error(errMsg);
   }
 
