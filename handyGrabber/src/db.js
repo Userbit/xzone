@@ -16,8 +16,9 @@ exports.DbConn = class {
       this.db = this.client.db();
       return this.db;
     } catch (e) {
-      e.message = `Connection with MongoDb not has been established: ${e.message}`;
-      throw e;
+      throw Error(
+        `Connection with MongoDb not has been established: ${e.message}`
+      );
     }
   }
 
