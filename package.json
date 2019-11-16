@@ -10,7 +10,7 @@
     "testSilent": "JEST_SILENT_REPORTER_DOTS=true jest --reporters=jest-silent-reporter",
     "testDots": "jest --reporters=jest-simple-dot-reporter",
     "testDotsCover": "jest --coverage --reporters=jest-simple-dot-reporter",
-    "testVSCode": "jest --config='./jest.vscode.config.json'",
+    "testVSCode": "jest --config='./jest.vscode.config.js'",
     "start": "./index.js"
   },
   "jest": {

@@ -1,5 +1,6 @@
-require('jest-extended');
-require('jest-chain');
-//require('any other test framework libraries you are using');
+require("jest-extended");
+require("jest-chain");
+// require('any other test framework libraries you are using');
 
-jest.mock('child_process')
+// for mocking of util.sleep()
+jest.mock("child_process");
