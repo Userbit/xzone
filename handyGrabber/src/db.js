@@ -16,9 +16,7 @@ exports.DbConn = class {
       this.db = this.client.db();
       return this.db;
     } catch (e) {
-      throw Error(
-        `Connection with MongoDb not has been established: ${e.message}`
-      );
+      throw Error(`Connection with MongoDb not has been established: ${e.message}`);
     }
   }
 
@@ -27,8 +25,7 @@ exports.DbConn = class {
       await this.client.close();
       debug("Connection to MongoDb was closed.");
     } catch (e) {
-      e.message = `Error occurred when closing connection: ${e.message}`;
-      throw e;
+      throw Error(`Error occurred when closing connection: ${e.message}`);
     }
   }
 };

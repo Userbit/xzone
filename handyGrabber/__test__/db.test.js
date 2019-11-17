@@ -43,17 +43,16 @@ describe("testing db.js", () => {
   it("dbConn.close() with error", async () => {
     const mErr = Error("MongoDb error");
     const dbConn = new DbConn();
-    jest.spyOn(dbConn.client, "close").mockImplementation(() => {
-      throw mErr;
-    });
+    jest
+      .spyOn(dbConn.client, "close")
+      .mockImplementation()
+      .mockRejectedValueOnce(mErr);
 
     await expect(dbConn.close()).rejects.toThrow(
       "Error occurred when closing connection: MongoDb error"
     );
 
-    expect(dbConn.client.close)
-      .toHaveBeenCalledTimes(1)
-      .toThrow(mErr);
+    expect(dbConn.client.close).toHaveBeenCalledTimes(1);
   });
 
   it("first & second calls to dbConn.getDb() without error", async () => {
@@ -72,29 +71,20 @@ describe("testing db.js", () => {
   });
 
   it("first calls to dbConn.getDb() with error", async () => {
-    expect.assertions(5);
+    expect.assertions(3);
 
     const mErr = Error("MongoDb error");
     const dbConn = new DbConn();
-    jest.spyOn(dbConn.client, "connect").mockImplementation(() => {
-      throw mErr;
-    });
+    jest
+      .spyOn(dbConn.client, "connect")
+      .mockImplementation()
+      .mockRejectedValueOnce(mErr);
 
-    let db1;
+    await expect(dbConn.getDb()).rejects.toThrow(
+      "Connection with MongoDb not has been established: MongoDb error"
+    );
 
-    try {
-      db1 = await dbConn.getDb();
-    } catch (e) {
-      // eslint-disable-next-line jest/no-try-expect
-      expect(e.message).toBe(
-        "Connection with MongoDb not has been established: MongoDb error"
-      );
-    }
-
-    expect(db1).not.toBeDefined();
-    expect(dbConn.client.connect)
-      .toHaveBeenCalledTimes(1)
-      .toThrow(mErr);
+    expect(dbConn.client.connect).toHaveBeenCalledTimes(1);
     expect(dbConn.client.db).toHaveBeenCalledTimes(0);
   });
 });
