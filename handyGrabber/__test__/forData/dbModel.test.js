@@ -1,105 +1,94 @@
+const dbModule = require("../../src/forData/dbModel");
 
-// jest.mock('../../src/db.js')
+let entity = "movie";
 
-const {MongoClient} = require('mongodb');
-const dbModule = require('../../src/forData/dbModel')
+describe("testing init(), close(), checkEntity() methods", () => {
+  it("forData/dbModel.js should be required", () => {
+    expect(dbModule).toBeObject();
+  });
 
-let entity = 'movie'
-let db = null
+  it("dbModule.init() should work correctly", async () => {
+    const spy = jest.spyOn(dbModule, "checkEntity");
 
+    const db = await dbModule.init(entity);
 
-describe('testing init(), close(), checkEntity() methods', () => {
+    expect(spy).toHaveBeenCalledWith(entity);
+    expect(db).toContainKeys(["db", "dbConn", "docs", "log"]);
 
-    beforeEach(async () => {
-        db = await dbModule.init(entity)
-    })
+    await db.close();
+  });
 
-    afterEach(async () => {
-        await db.close()
-        db = null
-    })
+  it("dbModule.init() should return the same object when called once more", async () => {
+    const db = await dbModule.init(entity);
+    const db2 = await dbModule.init(entity);
 
-    test('forData/dbModel.js should be required', () => {
-        expect(dbModule).toBeObject()
-    })
+    expect(db2).toBe(db);
 
-    test('dbModule.init() should work correctly', async () => {
-        const spy = jest.spyOn(dbModule, 'checkEntity')
-        db = await dbModule.init(entity)
+    await db.close();
+  });
 
-        expect(spy).toBeCalledWith(entity)
-        expect(db).toContainKeys(['db', 'dbConn', 'docs', 'log'])
-    })
+  it("dbModule.checkEntity() should throw error without arg", async () => {
+    expect(() => {
+      dbModule.checkEntity();
+    }).toThrow("'entity' argurment should be 'movie' or 'torrent'.");
+  });
 
-    test('dbModule.init() should return the same object when called once more', async () => {
-        let db2 = await dbModule.init(entity)
-        expect(db2).toBe(db)
-    })
+  it("dbModule.checkEntity() should throw error with incorrect arg", async () => {
+    expect(() => {
+      dbModule.checkEntity("some");
+    }).toThrow("'entity' argurment should be 'movie' or 'torrent'.");
+  });
 
-    test('dbModule.checkEntity() should throw error without arg', async () => {
-        try {
-            await dbModule.checkEntity()
-        } catch(e) {
-            expect(e.message).toBe('"entity" argurment should be `movie` or `torrent`.')
-        }
-    })
+  it("dbModule.close() should work correctly", async () => {
+    const db = await dbModule.init(entity);
+    const spy = jest.spyOn(db.dbConn, "close");
 
-    test('dbModule.checkEntity() should throw error with incorrect arg', async () => {
-        try {
-            await dbModule.checkEntity('some')
-        } catch(e) {
-            expect(e.message).toBe('"entity" argurment should be `movie` or `torrent`.')
-        }
-    })
+    await db.close();
 
-    test('dbModule.close() should work correctly', async () => {
-        const spy = jest.spyOn(db.dbConn, 'close')
-        db.close()
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+});
 
-        expect(spy).toBeCalled()
-    })
+describe("testing createIndex()", () => {
+  it('dbModule.createIndex("torrent") should work correctly', async () => {
+    entity = "torrent";
+    const expectedIndexes = [
+      expect.objectContaining({ key: { _id: 1 } }),
+      expect.objectContaining({ background: true, key: { deleted: -1 } }),
+    ];
 
-})
+    const db = await dbModule.init(entity);
+    db.createIndex();
+    const indexes = await db.docs.indexes();
 
-describe('testing createIndex()', () => {
+    expect(indexes).toMatchObject(expect.arrayContaining(expectedIndexes));
 
-    afterEach(async () => {
-        await db.close()
-        db = null
-    })
+    await db.close();
+  });
 
-    test('dbModule.createIndex("torrent") should work correctly', async () => {
-        entity = 'torrent'
-        db = await dbModule.init(entity)
-        db.createIndex()
-        const indexes = await db.docs.indexes()
-        const expectedIndexes = [
-            expect.objectContaining({ "key": { "_id": 1 } }),
-            expect.objectContaining({ "background": true, "key": { "deleted": -1 } }),
-        ]
+  it('dbModule.createIndex("movie") should work correctly', async () => {
+    entity = "movie";
+    const expectedIndexes = [expect.objectContaining({ key: { _id: 1 } })];
 
-        expect(indexes)
-            .toMatchObject(expect.arrayContaining(expectedIndexes))
-    })
+    const db = await dbModule.init(entity);
+    db.createIndex();
+    const indexes = await db.docs.indexes();
 
-    test('dbModule.createIndex("movie") should work correctly', async () => {
-        entity = 'movie'
-        db = await dbModule.init(entity)
-        db.createIndex()
-        const indexes = await db.docs.indexes()
-        const expectedIndexes = [
-            expect.objectContaining({ "key": { "_id": 1 } }),
-        ]
+    expect(indexes).toMatchObject(expect.arrayContaining(expectedIndexes));
 
-        expect(indexes)
-            .toMatchObject(expect.arrayContaining(expectedIndexes))
-    })
+    await db.close();
+  });
 
-    test('dbModule.createIndex("movie") should throw error when something occur', async () => {
-        entity = 'movie'
-        db = await dbModule.init(entity)
-        db.docs.createIndex = jest.fn().mockRejectedValue(Error('some error occur'))
+  it('dbModule.createIndex("movie") should throw error when something occur', async () => {
+    entity = "movie";
+    const db = await dbModule.init(entity);
+    jest
+      .spyOn(db.docs, "createIndex")
+      .mockImplementation()
+      .mockRejectedValue(Error("some error occur"));
 
-        expect(db.createIndex()).rejects.toThrow('some error occur')
-    })
-})
+    await expect(db.createIndex()).rejects.toThrow("some error occur");
+
+    await db.close();
+  });
+});

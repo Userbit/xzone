@@ -22,7 +22,7 @@ module.exports = {
 
   checkEntity(entity) {
     if (!["movie", "torrent"].includes(entity)) {
-      throw Error('"entity" argurment should be `movie` or `torrent`.');
+      throw Error("'entity' argurment should be 'movie' or 'torrent'.");
     }
   },
 
