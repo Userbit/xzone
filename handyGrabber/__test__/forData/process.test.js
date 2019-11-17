@@ -1,128 +1,118 @@
+const proc = require("../../src/forData/process");
+const log = require("../../src/forData/log");
+const req = require("../../src/forData/request");
+const dbModel = require("../../src/forData/dbModel");
 
-const proc = require('../../src/forData/process')
-const log = require('../../src/forData/log')
-const req = require('../../src/forData/request')
-const dbModelPath = '../../src/forData/dbModel';
-const dbModel = require(dbModelPath)
+const stages = ["first", "upsert", "check"];
+const entities = ["movie", "torrent"];
 
-const stages = ['first', 'upsert', 'check']
-const entities = ['movie', 'torrent']
+describe("testing forData/process.js", () => {
+  it(".../process.js should be required", () => {
+    expect(proc).toBeObject();
+  });
 
-afterEach(() => {
-    jest.restoreAllMocks()
-})
+  it("init() method should run correctly", async () => {
+    const cliMock = { argv: { entity: "movie" } };
+    const dbMock = {
+      createIndex: jest.fn().mockResolvedValue({}),
+    };
+    jest.spyOn(dbModel, "init").mockResolvedValue(dbMock);
+    jest.spyOn(proc, "run").mockResolvedValue({});
 
-describe('testing forData/process.js', () => {
-    test('.../process.js should be required', () => {
-        expect(proc).toBeObject()
-    })
+    await proc.init(cliMock);
 
-    test('init() method should run correctly', async () => {
-        const cliMock = { argv: { entity: 'movie' } }
-        const dbMock = {
-            createIndex: jest.fn().mockResolvedValue({})
-        }
-        jest.spyOn(dbModel, 'init').mockResolvedValue(dbMock)
-        jest.spyOn(proc, 'run').mockResolvedValue({})
+    expect(dbModel.init).toHaveBeenCalledWith(cliMock.argv.entity);
+    expect(dbMock.createIndex).toHaveBeenCalledTimes(1);
+    expect(proc.run).toHaveBeenCalledWith(cliMock);
+  });
 
-        await proc.init(cliMock)
+  it("end() should call this.db.close", async () => {
+    const dbReal = proc.db;
+    proc.db = { close: jest.fn().mockResolvedValue({}) };
 
-        expect(dbModel.init).toBeCalledWith(cliMock.argv.entity)
-        expect(dbMock.createIndex).toBeCalledTimes(1)
-        expect(proc.run).toBeCalledWith(cliMock)
-    })
+    await proc.end();
 
-    test('end() should call this.db.close', async () => {
-        const dbReal = proc.db
-        proc.db = { close: jest.fn().mockResolvedValue({}) }
+    expect(proc.db.close).toHaveBeenCalledTimes(1);
 
-        await proc.end()
+    proc.db = dbReal;
+  });
 
-        expect(proc.db.close).toBeCalledTimes(1)
+  it.each(entities)("run() should call runEntity:%s() and end() methods", async (entity) => {
+    const state = { entity, stage: "some stage", log: 1 };
+    const cliMock = { argv: { ...state, trash: "trash" } };
+    const runEntity = `runEntity:${entity}`;
+    jest.spyOn(proc, runEntity).mockResolvedValue({});
+    jest.spyOn(proc, "end").mockResolvedValue({});
 
-        proc.db = dbReal
-    })
+    await proc.run(cliMock);
 
-    test('run() should call runEntity:movie|torrent(), end() methods', async () => {
-        for (let entity of entities) {
-            const runEntity = 'runEntity:' + entity
-            const state = { entity, stage: 'some stage', log: 1 }
-            const cliMock = { argv: { ...state, trash: 'trash' } }
-            jest.spyOn(proc, runEntity).mockResolvedValue({})
-            jest.spyOn(proc, 'end').mockResolvedValue({})
+    expect(proc[runEntity])
+      .toHaveBeenCalledTimes(1)
+      .toBeCalledWith(state);
+    expect(proc.end).toHaveBeenCalledTimes(1);
+  });
 
-            await proc.run(cliMock)
+  it("runEntity:movie() should call runStage() method one time", async () => {
+    const state = { stage: "some stage", entity: "movie", log: 1 };
+    jest.spyOn(proc, "runStage").mockResolvedValue({});
 
-            expect(proc[runEntity])
-                .toBeCalledTimes(1)
-                .toBeCalledWith(state)
-            expect(proc.end).toBeCalledTimes(1)
+    await proc["runEntity:movie"](state);
 
-            jest.restoreAllMocks()
-        }
-    })
+    expect(proc.runStage)
+      .toHaveBeenCalledTimes(1)
+      .toBeCalledWith(state);
+  });
 
-    test('runEntity:movie() should call runStage() method one time', async () => {
-        const state = { stage: 'some stage', entity: 'movie', log: 1 }
-        jest.spyOn(proc, 'runStage').mockResolvedValue({})
+  it("runEntity:torrent() should call runStage() method TWO times", async () => {
+    const state = { stage: "some stage", entity: "movie", log: 1 };
+    jest.spyOn(proc, "runStage").mockResolvedValue({});
 
-        await proc['runEntity:movie'](state)
+    await proc["runEntity:torrent"](state);
 
-        expect(proc.runStage)
-            .toBeCalledTimes(1)
-            .toBeCalledWith(state)
+    expect(proc.runStage)
+      .toHaveBeenCalledTimes(2)
+      .nthCalledWith(1, { ...state, deleted: true })
+      .nthCalledWith(2, { ...state, deleted: false });
 
-        jest.restoreAllMocks()
-    })
+    jest.restoreAllMocks();
+  });
 
-    test('runEntity:torrent() should call runStage() method TWO times', async () => {
-        const state = { stage: 'some stage', entity: 'movie', log: 1 }
-        jest.spyOn(proc, 'runStage').mockResolvedValue({})
+  it.each(stages)(
+    "runStage() should call initSubModules(), runStage:%s() methods",
+    async (stage) => {
+      const state = { stage, entity: "some entity", log: 1 };
+      const runStageForStage = `runStage:${stage}`;
+      jest.spyOn(proc, runStageForStage).mockResolvedValue({});
+      jest.spyOn(proc, "initSubModules").mockResolvedValue({});
 
-        await proc['runEntity:torrent'](state)
+      await proc.runStage(state);
 
-        expect(proc.runStage)
-            .toBeCalledTimes(2)
-            .nthCalledWith(1, { ...state, deleted: true })
-            .nthCalledWith(2, { ...state, deleted: false })
+      expect(proc[runStageForStage])
+        .toHaveBeenCalledTimes(1)
+        .toBeCalledWith(state);
+      expect(proc.initSubModules)
+        .toHaveBeenCalledTimes(1)
+        .toBeCalledWith(state);
+    }
+  );
 
-        jest.restoreAllMocks()
-    })
+  it("initSubModules() should call log.init(), req.init() methods", async () => {
+    const state = {
+      stage: "some stage",
+      entity: "some entity",
+      log: 1,
+      deleted: true,
+    };
+    jest.spyOn(req, "init").mockResolvedValue({});
+    jest.spyOn(log, "init").mockResolvedValue({});
 
-    test('runStage() should call initSubModules(), runStage:first|upsert|check() methods', async () => {
-        for (let stage of stages) {
-            const runStage_stage = 'runStage:' + stage
-            const state = { stage, entity: 'some entity', log: 1 }
-            jest.spyOn(proc, runStage_stage).mockResolvedValue({})
-            jest.spyOn(proc, 'initSubModules').mockResolvedValue({})
+    await proc.initSubModules(state);
 
-            await proc.runStage(state)
-
-            expect(proc[runStage_stage])
-                .toBeCalledTimes(1)
-                .toBeCalledWith(state)
-            expect(proc.initSubModules)
-                .toBeCalledTimes(1)
-                .toBeCalledWith(state)
-
-            jest.restoreAllMocks()
-        }
-    })
-
-    test('initSubModules() should call log.init(), req.init() methods', async () => {
-        const state = { stage: 'some stage', entity: 'some entity', log: 1, deleted: true }
-        jest.spyOn(req, 'init').mockResolvedValue({})
-        jest.spyOn(log, 'init').mockResolvedValue({})
-
-        await proc.initSubModules(state)
-
-        expect(log.init)
-            .toBeCalledTimes(1)
-            .toBeCalledWith(state)
-        expect(req.init)
-            .toBeCalledTimes(1)
-            .toBeCalledWith(state)
-        
-    })
-
-})
+    expect(log.init)
+      .toHaveBeenCalledTimes(1)
+      .toBeCalledWith(state);
+    expect(req.init)
+      .toHaveBeenCalledTimes(1)
+      .toBeCalledWith(state);
+  });
+});
