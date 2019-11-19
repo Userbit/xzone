@@ -1,6 +1,6 @@
-import cli from "./cli";
-import processImg from "./forImg/process";
-import processData from "./forData/process";
+import cli from "./cli.js";
+import processImg from "./forImg/process.js";
+import processData from "./forData/process.js";
 
 const initCli = () => {
   cli.argv = cli.argv

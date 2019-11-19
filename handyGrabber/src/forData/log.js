@@ -1,4 +1,4 @@
-import util_ from "../util";
+import util_ from "../util.js";
 
 const { debug, sleep, ...util } = util_(module);
 

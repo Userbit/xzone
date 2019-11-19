@@ -1,5 +1,5 @@
-import DbConn from "../db";
-import util from "../util";
+import DbConn from "../db.js";
+import util from "../util.js";
 
 const { debug } = util(module);
 

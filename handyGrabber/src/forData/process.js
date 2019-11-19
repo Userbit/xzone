@@ -1,7 +1,7 @@
-import dbModel from "./dbModel";
-import log from "./log";
-import req from "./request";
-import util_ from "../util";
+import dbModel from "./dbModel.js";
+import log from "./log.js";
+import req from "./request.js";
+import util_ from "../util.js";
 
 const { debug, sleep, ...util } = util_(module);
 

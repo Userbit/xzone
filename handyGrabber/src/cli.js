@@ -1,5 +1,5 @@
 import yargs from "yargs";
-import util from "./util";
+import util from "./util.js";
 
 const { debug } = util(module);
 
