@@ -3,11 +3,17 @@
     "browser": true,
     // "commonjs": true,
     "es6": true,
-    "node": true,
+    // "node": true,
     "jest": true
   },
   "plugins": ["react", "prettier", "jest", "jest-formatting", "import"],
-  "extends": ["airbnb", "prettier", "plugin:jest/all", "plugin:jest-formatting/strict"],
+  "extends": [
+    "airbnb",
+    "prettier",
+    "plugin:jest/all",
+    "plugin:jest-formatting/strict",
+    "plugin:node/recommended-module"
+  ],
   "rules": {
     "prettier/prettier": "error",
 

@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
     "test": "jest --reporters=jest-simple-dot-reporter",
     "cover": "jest --coverage",
@@ -53,6 +56,7 @@
     "eslint-plugin-jest": "^23.0.4",
     "eslint-plugin-jest-formatting": "^1.2.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^1.7.0",
