@@ -16,7 +16,8 @@
     "import/no-commonjs": "error",
     "import/no-namespace": "error",
     "import/export": "error",
-    "import/prefer-default-export": "error"
+    "import/prefer-default-export": "error",
+    "import/extensions": ["error", "always", { "ignorePackages": true }]
   },
   "globals": {
     "Atomics": "readonly",
