@@ -1,5 +1,7 @@
-const yargs = require("yargs");
-const { debug } = require("./util")(module);
+import yargs from "yargs";
+import util from "./util";
+
+const { debug } = util(module);
 
 const STAGES = {
   first: "first",
@@ -91,7 +93,7 @@ const argv = yargs.command(dataCommand).command(imgCommand);
 // .help()
 // .argv
 
-module.exports = {
+export default {
   argv,
   dataAliases,
   imgAliases,

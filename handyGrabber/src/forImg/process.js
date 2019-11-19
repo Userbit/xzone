@@ -1,6 +1,8 @@
-const { debug, sleep } = require("../util")(module);
+import util from "../util";
 
-module.exports = {
+const { debug, sleep } = util(module);
+
+export default {
   init(cli) {
     debug("Start forImg/process.js");
     sleep(10);

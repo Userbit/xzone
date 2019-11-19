@@ -1,6 +1,6 @@
-const cli = require("./cli");
-const processData = require("./forData/process");
-const processImg = require("./forImg/process");
+import cli from "./cli";
+import processImg from "./forImg/process";
+import processData from "./forData/process";
 
 const initCli = () => {
   cli.argv = cli.argv
@@ -23,7 +23,7 @@ const start = async (initedCli) => {
   }
 };
 
-module.exports = {
+export default {
   start,
   initCli,
 };

@@ -1,10 +1,12 @@
-const { MongoClient } = require("mongodb");
-const { debug } = require("./util")(module);
+import mongodb from "mongodb";
+import util from "./util";
 
-exports.DbConn = class {
+const { debug } = util(module);
+
+export default class DbConn {
   constructor(url = "mongodb://localhost:27017", dbName = "handyData") {
     this.url = `${url}/${dbName}`;
-    this.client = new MongoClient(this.url, { useNewUrlParser: true });
+    this.client = new mongodb.MongoClient(this.url, { useNewUrlParser: true });
   }
 
   async getDb() {
@@ -28,4 +30,4 @@ exports.DbConn = class {
       throw Error(`Error occurred when closing connection: ${e.message}`);
     }
   }
-};
+}

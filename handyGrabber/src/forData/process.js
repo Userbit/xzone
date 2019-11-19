@@ -1,9 +1,11 @@
-const { debug, sleep, ...util } = require("../util")(module);
-const dbModel = require("./dbModel");
-const log = require("./log");
-const req = require("./request");
+import dbModel from "./dbModel";
+import log from "./log";
+import req from "./request";
+import util_ from "../util";
 
-module.exports = {
+const { debug, sleep, ...util } = util_(module);
+
+export default {
   async init(cli) {
     debug("Start forData/process.js");
 

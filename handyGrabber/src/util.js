@@ -1,5 +1,5 @@
-const childProcess = require("child_process");
-const debugModule = require("debug");
+import childProcess from "child_process";
+import debugModule from "debug";
 
 const rootdir = "xzone";
 
@@ -33,10 +33,9 @@ function getObjectForKeys(keys, fromObject) {
   }, {});
 }
 
-module.exports = (externalModule) => {
+export default (externalModule) => {
   if (!(externalModule instanceof module.constructor)) {
-    const errMsg =
-      "require('path/to/util')(module) should be passed Module object of caller";
+    const errMsg = "require('path/to/util')(module) should be passed Module object of caller";
     throw Error(errMsg);
   }
 

@@ -1,4 +1,4 @@
-const request = require("request");
+import request from "request";
 
 const defaultOptions = {
   baseUrl: "some_valid_url",
@@ -30,7 +30,7 @@ const queryOptions = {
   },
 };
 
-module.exports = {
+export default {
   baseRequest: {},
 
   init(state) {

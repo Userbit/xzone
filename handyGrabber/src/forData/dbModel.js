@@ -1,9 +1,11 @@
-const { debug } = require("../util")(module);
-const { DbConn } = require("../db");
+import DbConn from "../db";
+import util from "../util";
+
+const { debug } = util(module);
 
 let objDb = null;
 
-module.exports = {
+export default {
   async init(entity) {
     this.checkEntity(entity);
     this.entity = entity;

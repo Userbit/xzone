@@ -1,6 +1,8 @@
-const { debug, sleep, ...util } = require("../util")(module);
+import util_ from "../util";
 
-module.exports = {
+const { debug, sleep, ...util } = util_(module);
+
+export default {
   init(state) {
     this.state = {
       ...util.getObjectForKeys(["stage", "entity", "deleted"], state),
