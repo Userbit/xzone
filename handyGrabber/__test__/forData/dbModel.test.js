@@ -1,4 +1,4 @@
-import dbModule from "../../src/forData/dbModel";
+import dbModule from "../../src/forData/dbModel.js";
 
 let entity = "movie";
 

@@ -1,5 +1,5 @@
 import request from "request";
-import req from "../../src/forData/request";
+import req from "../../src/forData/request.js";
 
 const entities = ["movie", "torrent"];
 

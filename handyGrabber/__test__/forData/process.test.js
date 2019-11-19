@@ -1,7 +1,7 @@
-import proc from "../../src/forData/process";
-import log from "../../src/forData/log";
-import req from "../../src/forData/request";
-import dbModel from "../../src/forData/dbModel";
+import proc from "../../src/forData/process.js";
+import log from "../../src/forData/log.js";
+import req from "../../src/forData/request.js";
+import dbModel from "../../src/forData/dbModel.js";
 
 const stages = ["first", "upsert", "check"];
 const entities = ["movie", "torrent"];

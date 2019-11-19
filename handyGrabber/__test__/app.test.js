@@ -1,7 +1,7 @@
-import cli from "../src/cli";
-import app from "../src/app";
-import processData from "../src/forData/process";
-import processImg from "../src/forImg/process";
+import cli from "../src/cli.js";
+import app from "../src/app.js";
+import processData from "../src/forData/process.js";
+import processImg from "../src/forImg/process.js";
 
 describe("testing app.js", () => {
   it("app.js should be imported", () => {

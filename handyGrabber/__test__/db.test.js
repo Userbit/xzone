@@ -1,5 +1,5 @@
 import mongodb from "mongodb";
-import DbConn from "../src/db";
+import DbConn from "../src/db.js";
 
 jest.mock("mongodb");
 

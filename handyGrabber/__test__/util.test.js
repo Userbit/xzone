@@ -1,6 +1,6 @@
 import debug from "debug";
 import childProcess from "child_process";
-import util from "../src/util";
+import util from "../src/util.js";
 
 jest.mock("debug");
 jest.mock("child_process");
