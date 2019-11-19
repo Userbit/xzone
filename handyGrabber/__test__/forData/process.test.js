@@ -1,7 +1,7 @@
-const proc = require("../../src/forData/process");
-const log = require("../../src/forData/log");
-const req = require("../../src/forData/request");
-const dbModel = require("../../src/forData/dbModel");
+import proc from "../../src/forData/process";
+import log from "../../src/forData/log";
+import req from "../../src/forData/request";
+import dbModel from "../../src/forData/dbModel";
 
 const stages = ["first", "upsert", "check"];
 const entities = ["movie", "torrent"];

@@ -1,4 +1,4 @@
-const log = require("../../src/forData/log");
+import log from "../../src/forData/log";
 
 describe("testing forData/log.js", () => {
   it("log.js should be required", () => {

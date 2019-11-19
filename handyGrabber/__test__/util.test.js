@@ -1,10 +1,9 @@
+import debug from "debug";
+import childProcess from "child_process";
+import util from "../src/util";
+
 jest.mock("debug");
-const debug = require("debug");
-
 jest.mock("child_process");
-const childProcess = require("child_process");
-
-const util = require("../src/util");
 
 describe("testing util.js", () => {
   it("util.js should be required", () => {
@@ -12,8 +11,7 @@ describe("testing util.js", () => {
   });
 
   it("require('path/to/util')(module) should throw error without Module object", () => {
-    const errMsg =
-      "require('path/to/util')(module) should be passed Module object of caller";
+    const errMsg = "require('path/to/util')(module) should be passed Module object of caller";
 
     expect(() => util()).toThrow(errMsg);
     expect(() => util({})).toThrow(errMsg);
@@ -24,19 +22,14 @@ describe("testing util.js", () => {
   });
 
   it("getNamespace should return correct string", () => {
-    const filename =
-      "/home/userbit/c/Learn/Javascript/practice/xzone/handyGrabber/src/cli.js";
+    const filename = "/home/userbit/c/Learn/Javascript/practice/xzone/handyGrabber/src/cli.js";
     const moduleMock = { filename };
 
-    expect(util(module).getNamespace(moduleMock, "xzone")).toBe(
-      "xzone/handyGrabber/src/cli.js:"
-    );
+    expect(util(module).getNamespace(moduleMock, "xzone")).toBe("xzone/handyGrabber/src/cli.js:");
   });
 
   it("debug should be called", () => {
-    expect(debug).toHaveBeenCalledWith(
-      "xzone/handyGrabber/__test__/util.test.js:"
-    );
+    expect(debug).toHaveBeenCalledWith("xzone/handyGrabber/__test__/util.test.js:");
   });
 
   it("util.sleep should run correctly", () => {

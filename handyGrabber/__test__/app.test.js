@@ -1,8 +1,7 @@
-const cli = require("../src/cli");
-const app = require("../src/app");
-
-const processData = require("../src/forData/process");
-const processImg = require("../src/forImg/process");
+import cli from "../src/cli";
+import app from "../src/app";
+import processData from "../src/forData/process";
+import processImg from "../src/forImg/process";
 
 describe("testing app.js", () => {
   it("app.js should be imported", () => {

@@ -1,4 +1,4 @@
-const dbModule = require("../../src/forData/dbModel");
+import dbModule from "../../src/forData/dbModel";
 
 let entity = "movie";
 

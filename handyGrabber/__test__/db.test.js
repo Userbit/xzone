@@ -1,7 +1,7 @@
-jest.mock("mongodb");
+import mongodb from "mongodb";
+import DbConn from "../src/db";
 
-const { MongoClient } = require("mongodb");
-const { DbConn } = require("../src/db");
+jest.mock("mongodb");
 
 const opts = { useNewUrlParser: true };
 const keysOfClient = ["close", "connect", "db"];
@@ -14,22 +14,23 @@ describe("testing db.js", () => {
 
   it("new DbConn() without args", () => {
     const url = `mongodb://localhost:27017/${dbName}`;
-
     const dbConn = new DbConn();
 
-    expect(MongoClient).toHaveBeenCalledWith(url, opts);
+    expect(mongodb.MongoClient).toHaveBeenCalledWith(url, opts);
     expect(dbConn.url).toBe(url);
     expect(dbConn.client).toContainKeys(keysOfClient);
   });
 
   it("new DbConn() with args", () => {
-    let url = "mongodb://localhost:27018";
+    const url = "mongodb://localhost:27018";
     const dbn = `${dbName}2`;
-    const dbConn = new DbConn(url, dbn);
-    url = `${url}/${dbn}`;
+    const newUrl = `${url}/${dbn}`;
+    jest.spyOn(mongodb, "MongoClient").mockImplementationOnce();
 
-    expect(MongoClient).toHaveBeenCalledWith(url, opts);
-    expect(dbConn.url).toBe(url);
+    const dbConn = new DbConn(url, dbn);
+
+    expect(mongodb.MongoClient).toHaveBeenCalledWith(newUrl, opts);
+    expect(dbConn.url).toBe(newUrl);
     expect(dbConn.client).toContainKeys(keysOfClient);
   });
 

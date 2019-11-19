@@ -1,4 +1,4 @@
-const cli = require("../src/cli");
+import cli from "../src/cli";
 
 // Initialize parser using the command module
 const parser = cli.argv.help();

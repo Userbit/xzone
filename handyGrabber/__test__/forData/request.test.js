@@ -1,5 +1,5 @@
-const request = require("request");
-const req = require("../../src/forData/request");
+import request from "request";
+import req from "../../src/forData/request";
 
 const entities = ["movie", "torrent"];
 
