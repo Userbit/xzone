@@ -5,6 +5,9 @@ import util from "../src/util.js";
 jest.mock("debug");
 jest.mock("child_process");
 
+const packageName = "xzone";
+const thisFileName = "handyGrabber/__test__/util.test.js";
+
 describe("testing util.js", () => {
   it("util.js should be required", () => {
     expect(util).toBeFunction();
@@ -22,14 +25,16 @@ describe("testing util.js", () => {
   });
 
   it("getNamespace should return correct string", () => {
-    const filename = "/home/userbit/c/Learn/Javascript/practice/xzone/handyGrabber/src/cli.js";
+    const filename = `/home/user/${packageName}/handyGrabber/src/cli.js`;
     const moduleMock = { filename };
 
-    expect(util(module).getNamespace(moduleMock, "xzone")).toBe("xzone/handyGrabber/src/cli.js:");
+    expect(util(module).getNamespace(moduleMock, `/${packageName}/`)).toBe(
+      "handyGrabber/src/cli.js"
+    );
   });
 
   it("debug should be called", () => {
-    expect(debug).toHaveBeenCalledWith("xzone/handyGrabber/__test__/util.test.js:");
+    expect(debug).toHaveBeenCalledWith(`${thisFileName}:`);
   });
 
   it("util.sleep should run correctly", () => {
@@ -56,5 +61,24 @@ describe("testing util.js", () => {
     const result = util(module).getObjectForKeys(keys, fromObject);
 
     expect(result).toStrictEqual(expected);
+  });
+
+  it("util.getStackFrameInfo(1) should return object.filename is equal to this test file name", () => {
+    const thisModule = util(module).getStackFrameInfo(1);
+    const realFileName = util(module).getNamespace(thisModule, `/${packageName}/`);
+
+    expect(realFileName).toBe(thisFileName);
+  });
+
+  it(`util.getPackageName() should return '${packageName}'`, () => {
+    const realPackageName = util(module).getPackageName();
+
+    expect(realPackageName).toBe(packageName);
+  });
+
+  it(`util.getRootDir() should return '/${packageName}/'`, () => {
+    const rootDir = util(module).getRootDir();
+
+    expect(rootDir).toBe(`/${packageName}/`);
   });
 });

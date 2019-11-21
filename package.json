@@ -2,7 +2,7 @@
   "type": "module",
   "name": "xzone",
   "version": "1.0.0",
-  "description": "",
+  "description": "xzone",
   "main": "index.js",
   "engines": {
     "node": ">=8.0.0"
@@ -15,7 +15,8 @@
     "testDots": "jest --reporters=jest-simple-dot-reporter",
     "testDotsCover": "jest --coverage --reporters=jest-simple-dot-reporter",
     "testVSCode": "jest --config='./jest.vscode.config.js'",
-    "start": "./index.js"
+    "build": "babel ./handyGrabber/src/ --out-dir ./out/src/",
+    "start": "npm run build && DEBUG=* node out/src/app.js getdata -e movie -s check -l 0"
   },
   "jest": {
     "verbose": false,
@@ -29,7 +30,7 @@
       "^.+\\.[t|j]sx?$": "babel-jest"
     }
   },
-  "author": "",
+  "author": "Userbit",
   "license": "ISC",
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
