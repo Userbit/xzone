@@ -1,4 +1,5 @@
 import cli from "./cli.js";
+import util from "./util.js";
 import processImg from "./forImg/process.js";
 import processData from "./forData/process.js";
 
@@ -28,7 +29,7 @@ export default {
   initCli,
 };
 
-if (!module.parent) {
+if (process.argv[1] === util().thisFile) {
   // Only run in real CLI invoking, not in tests.
   const initedCli = initCli();
   start(initedCli);

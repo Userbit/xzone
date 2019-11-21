@@ -1,6 +1,6 @@
 import util_ from "../util.js";
 
-const { debug, sleep, ...util } = util_(module);
+const { debug, sleep, ...util } = util_();
 
 export default {
   init(state) {

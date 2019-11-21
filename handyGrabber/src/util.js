@@ -1,6 +1,7 @@
 import childProcess from "child_process";
 import debugModule from "debug";
 import callsites from "callsites";
+import url from "url";
 import packageJson from "../../package.json";
 
 function getPackageName() {
@@ -16,7 +17,7 @@ const rootdir = getRootDir();
 function getNamespace(externalModule, rootDir) {
   const { filename } = externalModule;
   const namespace = filename.slice(filename.indexOf(rootDir) + rootDir.length);
-  return `${namespace}`; // such as: path/to/file.js
+  return `${namespace}`; // such as: 'path/to/file.js'
 }
 
 function getDebug(externalModule) {
@@ -43,10 +44,18 @@ function getObjectForKeys(keys, fromObject) {
   }, {});
 }
 
+function getPath(urlOrPath) {
+  const protocol = "file://";
+  if (urlOrPath.includes(protocol)) return url.fileURLToPath(urlOrPath);
+
+  return urlOrPath;
+}
+
 function getStackFrameInfo(stackFrameNum = 0) {
   const callsite = callsites()[stackFrameNum];
   const info = {
-    filename: callsite.getFileName(),
+    // When ES Modules .getFileName() return url such as "file:///path/to/file.js"
+    filename: getPath(callsite.getFileName()),
     function: callsite.getFunctionName(),
     line: callsite.getLineNumber(),
     column: callsite.getColumnNumber(),
@@ -55,15 +64,11 @@ function getStackFrameInfo(stackFrameNum = 0) {
   return info;
 }
 
-export default (externalModule) => {
-  if (!(externalModule instanceof module.constructor)) {
-    const errMsg = "require('path/to/util')(module) should be passed Module object of caller";
-    throw Error(errMsg);
-  }
-
-  externalModule = getStackFrameInfo(2);
+export default () => {
+  const externalModule = getStackFrameInfo(2);
 
   return {
+    thisFile: externalModule.filename,
     debug: getDebug(externalModule),
     sleep: sleep(externalModule),
     getNamespace,
@@ -71,5 +76,6 @@ export default (externalModule) => {
     getStackFrameInfo,
     getPackageName,
     getRootDir,
+    getPath,
   };
 };

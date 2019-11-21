@@ -1,7 +1,7 @@
 import yargs from "yargs";
 import util from "./util.js";
 
-const { debug } = util(module);
+const { debug } = util();
 
 const STAGES = {
   first: "first",

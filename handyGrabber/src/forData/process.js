@@ -3,7 +3,7 @@ import log from "./log.js";
 import req from "./request.js";
 import util_ from "../util.js";
 
-const { debug, sleep, ...util } = util_(module);
+const { debug, sleep, ...util } = util_();
 
 export default {
   async init(cli) {

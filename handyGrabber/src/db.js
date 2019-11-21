@@ -1,7 +1,7 @@
 import mongodb from "mongodb";
 import util from "./util.js";
 
-const { debug } = util(module);
+const { debug } = util();
 
 export default class DbConn {
   constructor(url = "mongodb://localhost:27017", dbName = "handyData") {

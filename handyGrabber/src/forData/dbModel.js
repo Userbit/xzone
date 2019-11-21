@@ -1,7 +1,7 @@
 import DbConn from "../db.js";
 import util from "../util.js";
 
-const { debug } = util(module);
+const { debug } = util();
 
 let objDb = null;
 
