@@ -16,7 +16,8 @@
     "testDotsCover": "jest --coverage --reporters=jest-simple-dot-reporter",
     "testVSCode": "jest --config='./jest.vscode.config.js'",
     "build": "babel ./handyGrabber/src/ --out-dir ./out/src/",
-    "start": "npm run build && DEBUG=* node out/src/app.js getdata -e movie -s check -l 0"
+    "start": "npm run build && DEBUG=* node out/src/app.js getdata -e movie -s check -l 0",
+    "startesm": "DEBUG=* node --experimental-modules handyGrabber/src/app.js getdata -e movie -s check -l 0"
   },
   "jest": {
     "verbose": false,
