@@ -1,5 +1,6 @@
 import debug from "debug";
 import childProcess from "child_process";
+import path from "path";
 import util from "../src/util.js";
 
 jest.mock("debug");
@@ -13,24 +14,15 @@ describe("testing util.js", () => {
     expect(util).toBeFunction();
   });
 
-  it("require('path/to/util')(module) should throw error without Module object", () => {
-    const errMsg = "require('path/to/util')(module) should be passed Module object of caller";
-
-    expect(() => util()).toThrow(errMsg);
-    expect(() => util({})).toThrow(errMsg);
-  });
-
-  it('require("path/to/util")(module) should not throw error whith Module object', () => {
-    expect(() => util(module)).not.toThrow();
+  it("util() should return object", () => {
+    expect(util()).toBeObject();
   });
 
   it("getNamespace should return correct string", () => {
     const filename = `/home/user/${packageName}/handyGrabber/src/cli.js`;
     const moduleMock = { filename };
 
-    expect(util(module).getNamespace(moduleMock, `/${packageName}/`)).toBe(
-      "handyGrabber/src/cli.js"
-    );
+    expect(util().getNamespace(moduleMock, `/${packageName}/`)).toBe("handyGrabber/src/cli.js");
   });
 
   it("debug should be called", () => {
@@ -38,7 +30,7 @@ describe("testing util.js", () => {
   });
 
   it("util.sleep should run correctly", () => {
-    util(module).sleep(0.1);
+    util().sleep(0.1);
 
     expect(childProcess.execSync).toHaveBeenCalledWith("sleep 0.1");
   });
@@ -48,7 +40,7 @@ describe("testing util.js", () => {
     const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 };
     const expected = { a: 1, k: 3, z: 5 };
 
-    const result = util(module).getObjectForKeys(keys, fromObject);
+    const result = util().getObjectForKeys(keys, fromObject);
 
     expect(result).toStrictEqual(expected);
   });
@@ -58,27 +50,43 @@ describe("testing util.js", () => {
     const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 };
     const expected = { a: 1, k: 3, z: 5 };
 
-    const result = util(module).getObjectForKeys(keys, fromObject);
+    const result = util().getObjectForKeys(keys, fromObject);
 
     expect(result).toStrictEqual(expected);
   });
 
   it("util.getStackFrameInfo(1) should return object.filename is equal to this test file name", () => {
-    const thisModule = util(module).getStackFrameInfo(1);
-    const realFileName = util(module).getNamespace(thisModule, `/${packageName}/`);
+    const thisModule = util().getStackFrameInfo(1);
+    const realFileName = util().getNamespace(thisModule, `/${packageName}/`);
 
     expect(realFileName).toBe(thisFileName);
   });
 
   it(`util.getPackageName() should return '${packageName}'`, () => {
-    const realPackageName = util(module).getPackageName();
+    const realPackageName = util().getPackageName();
 
     expect(realPackageName).toBe(packageName);
   });
 
   it(`util.getRootDir() should return '/${packageName}/'`, () => {
-    const rootDir = util(module).getRootDir();
+    const rootDir = util().getRootDir();
 
     expect(rootDir).toBe(`/${packageName}/`);
+  });
+
+  it("util.getPath(url) should return absolute path if Url was passed", () => {
+    const expectedPath = "/home/path/to/file.js";
+    const realPath = util().getPath(`file://${expectedPath}`);
+
+    expect(path.isAbsolute(realPath)).toBeTrue();
+    expect(realPath).toBe(expectedPath);
+  });
+
+  it("util.getPath(path) should return the same absolute path if Path was passed", () => {
+    const expectedPath = "/home/path/to/file.js";
+    const realPath = util().getPath(expectedPath);
+
+    expect(path.isAbsolute(realPath)).toBeTrue();
+    expect(realPath).toBe(expectedPath);
   });
 });
