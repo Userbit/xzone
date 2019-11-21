@@ -5,7 +5,7 @@
   "description": "xzone",
   "main": "index.js",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=8.3.0"
   },
   "scripts": {
     "test": "jest --reporters=jest-simple-dot-reporter",
