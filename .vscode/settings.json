@@ -1,0 +1,7 @@
+{
+  "jest.showCoverageOnLoad": true,
+  "jest.autoEnable": true,
+  "jest.runAllTestsFirst": false,
+  // This Jest config overrides options in ./package.json
+  "jest.pathToConfig": "./jest.vscode.config.js"
+}
