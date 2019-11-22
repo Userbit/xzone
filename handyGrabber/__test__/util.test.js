@@ -14,8 +14,8 @@ describe("testing util.js", () => {
     expect(util).toBeFunction();
   });
 
-  it("util() should return object", () => {
-    expect(util()).toBeObject();
+  it("util() should return object with thisFile property contained this test file 'util.test.js' at the end", () => {
+    expect(util().thisFile).toEndWith(thisFileName);
   });
 
   it("getNamespace should return correct string", () => {
@@ -25,17 +25,19 @@ describe("testing util.js", () => {
     expect(util().getNamespace(moduleMock, `/${packageName}/`)).toBe("handyGrabber/src/cli.js");
   });
 
-  it("debug should be called", () => {
+  it("debug() should be called after util() called", () => {
+    util();
+
     expect(debug).toHaveBeenCalledWith(`${thisFileName}:`);
   });
 
-  it("util.sleep should run correctly", () => {
+  it("util.sleep(seconds) should run childProcess.execSync('sleep seconds')", () => {
     util().sleep(0.1);
 
     expect(childProcess.execSync).toHaveBeenCalledWith("sleep 0.1");
   });
 
-  it("util.getObjectForKeys() should run correctly for existing keys", () => {
+  it("util.getObjectForKeys(keys, from) should return new object with keys for existing keys in passed object", () => {
     const keys = ["a", "k", "z"];
     const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 };
     const expected = { a: 1, k: 3, z: 5 };
@@ -45,7 +47,7 @@ describe("testing util.js", () => {
     expect(result).toStrictEqual(expected);
   });
 
-  it("util.getObjectForKeys() should run correctly for not existing keys", () => {
+  it("util.getObjectForKeys(keys, from) should return new object with only existing keys in passed object", () => {
     const keys = ["a", "AA", "k", "z", "BB"];
     const fromObject = { a: 1, b: 2, k: 3, c: 4, z: 5, m: 6 };
     const expected = { a: 1, k: 3, z: 5 };
@@ -55,14 +57,7 @@ describe("testing util.js", () => {
     expect(result).toStrictEqual(expected);
   });
 
-  it("util.getStackFrameInfo(1) should return object.filename is equal to this test file name", () => {
-    const thisModule = util().getStackFrameInfo(1);
-    const realFileName = util().getNamespace(thisModule, `/${packageName}/`);
-
-    expect(realFileName).toBe(thisFileName);
-  });
-
-  it(`util.getPackageName() should return '${packageName}'`, () => {
+  it(`util.getPackageName() should return '${packageName}' of package name from main package.json`, () => {
     const realPackageName = util().getPackageName();
 
     expect(realPackageName).toBe(packageName);
@@ -88,5 +83,25 @@ describe("testing util.js", () => {
 
     expect(path.isAbsolute(realPath)).toBeTrue();
     expect(realPath).toBe(expectedPath);
+  });
+
+  describe("util.getStackFrameInfo", () => {
+    it("with arg (1) should return object with filename key is equal to this test file name 'util.test.js'", () => {
+      const thisModule = util().getStackFrameInfo(1);
+
+      expect(thisModule.filename).toEndWith(thisFileName);
+    });
+
+    it("without arg () by default as (0) should return object with filename key contained 'util.js' file", () => {
+      const thisModule = util().getStackFrameInfo();
+
+      expect(thisModule.filename).toEndWith("util.js");
+    });
+
+    it("should return object with all specifying keys", () => {
+      const thisModule = util().getStackFrameInfo();
+
+      expect(thisModule).toContainAllKeys(["function", "filename", "line", "column"]);
+    });
   });
 });
