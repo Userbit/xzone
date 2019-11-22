@@ -28,7 +28,7 @@ describe("testing util.js", () => {
   it("debug() should be called after util() called", () => {
     util();
 
-    expect(debug).toHaveBeenCalledWith(`${thisFileName}:`);
+    expect(debug).toHaveBeenCalledWith(expect.toEndWith(`${thisFileName}:`));
   });
 
   it("util.sleep(seconds) should run childProcess.execSync('sleep seconds')", () => {
