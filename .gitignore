@@ -7,6 +7,7 @@ node_modules/
 
 # ignore old/*.json 
 /old/*.json
+/.old
 
 /sandbox
 /out
