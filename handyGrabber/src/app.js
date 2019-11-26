@@ -1,7 +1,11 @@
+import config from "../../config.js";
 import cli from "./cli.js";
 import util from "./util.js";
 import processImg from "./forImg/process.js";
 import processData from "./forData/process.js";
+
+// Perform validation
+config.validate({ allowed: "strict" });
 
 const initCli = () => {
   cli.argv = cli.argv

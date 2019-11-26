@@ -1,14 +1,18 @@
 import request from "request";
+import url from "url";
+import config from "../../../config.js";
+
+const baseUrl = config.get("baseUrl");
 
 const defaultOptions = {
-  baseUrl: "some_valid_url",
+  baseUrl,
   json: true,
   method: "GET",
   gzip: true,
   headers: {
+    Host: new url.Url(baseUrl).host,
     "User-Agent": "Java/1.8.0_212",
     "Accept-Encoding": "gzip, deflate",
-    Host: "some_valid_url",
     Accept: "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2",
     Connection: "keep-alive",
   },

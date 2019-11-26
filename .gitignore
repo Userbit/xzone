@@ -12,3 +12,5 @@ node_modules/
 /sandbox
 /out
 /reports*
+
+/.env
